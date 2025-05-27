@@ -2,26 +2,34 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-login') 
-        IMAGE_NAME = "swarajwadkar/flask-app"
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials-id')
     }
 
-            
+    stages {
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME ./app'
+                script {
+                    docker.build('flask-app')
+                }
             }
         }
+
         stage('Push to Docker Hub') {
             steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                sh 'docker push $IMAGE_NAME'
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials-id') {
+                        docker.image('flask-app').push('latest')
+                    }
+                }
             }
         }
+
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl apply -f k8s/deployment.yaml'
-                sh 'kubectl apply -f k8s/service.yaml'
+                script {
+                    sh 'kubectl apply -f k8s/deployment.yaml'
+                    sh 'kubectl apply -f k8s/service.yaml'
+                }
             }
         }
     }
