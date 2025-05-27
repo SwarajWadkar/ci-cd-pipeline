@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Clone') {
             steps {
-                git credentialsId: 'github-token', url: 'https://github.com/SwarajWadkar/ci-cd-pipeline.git'
+                git credentialsId: 'devops', url: 'https://github.com/SwarajWadkar/ci-cd-pipeline.git'
             }
         }
         stage('Build Docker Image') {
