@@ -6,12 +6,7 @@ pipeline {
         IMAGE_NAME = "swarajwadkar/flask-app"
     }
 
-    stages {
-        stage('Clone') {
-            steps {
-                git credentialsId: 'devops', url: 'https://github.com/SwarajWadkar/ci-cd-pipeline.git'
-            }
-        }
+            
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t $IMAGE_NAME ./app'
